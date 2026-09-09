@@ -1,0 +1,26 @@
+from fastapi.testclient import TestClient
+from app import app
+
+client = TestClient(app)
+
+def test_health():
+    response = client.get("/health")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "healthy"
+    assert data["application"] == "student-ml-api"
+
+def test_predict_success():
+    response = client.post("/predict", json={"value": 10})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["input"] == 10.0
+    assert data["prediction"] == 20.0
+
+def test_predict_missing_input():
+    response = client.post("/predict", json={})
+    assert response.status_code == 422  # FastAPI validation error code
+
+def test_predict_invalid_input():
+    response = client.post("/predict", json={"value": "not-a-number"})
+    assert response.status_code == 422
