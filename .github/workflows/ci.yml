@@ -24,7 +24,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Unit Tests
-        run: pytest
+        run: python -m pytest
 
       - name: Validate Docker Build
         run: docker build -t student-ml-api:test .
